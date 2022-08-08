@@ -12,19 +12,772 @@
     tools:context=".MainActivity">
 
 
+        <TextView
+            android:id="@+id/noImagePickedWarnView_versionnfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:text="Developed by CryptedBytes with ❤️"
+            android:textColor="@android:color/white"
+            android:textSize="10dp"
+            android:visibility="invisible" />
+        <TextView
+            android:id="@+id/noImagePickedWarnView_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="Please select an image to start"
+            android:textColor="@android:color/white"
+            android:textSize="14dp"
+            android:visibility="invisible" />
+
+        <Button
+            android:id="@+id/noImagePickedWarnView_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/noImagePickedWarnView_text"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/transparent_bg_bordered_button_accentcolor"
+
+            android:text="      Select from Gallery      "
+            android:textColor="@android:color/white"
+            android:visibility="invisible" />
 
 
-
-
-
-        <ImageView
-            android:id="@+id/imageView"
+        <RelativeLayout
+            android:id="@+id/imageLoadedMainView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="#000000"
+            android:visibility="visible">
+
+                <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/topBanner"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorAccent"
+                    android:minHeight="?attr/actionBarSize"
+
+                    android:theme="?attr/actionBarTheme"
+                    android:visibility="visible">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+
+                            android:text="Development build. Tap to learn more."
+                            android:textColor="@android:color/white" />
+
+                </androidx.appcompat.widget.Toolbar>
+
+                <TextView
+                    android:id="@+id/imageSizeWarn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:text="Warning. Selected image is too big to work with. Application may run out of memory."
+                    android:textColor="#F70000"
+                    android:textStyle="bold"
+                    android:visibility="gone">
+
+                </TextView>
+
+                <ImageView
+                    android:id="@+id/imageView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_above="@id/scrollerDescText"
+                    android:layout_below="@id/topBanner"
+                    android:layout_centerInParent="true"
+                    tools:srcCompat="@tools:sample/avatars[14]" />
+
+                <RelativeLayout
+                    android:id="@+id/scrollerDescText"
+                    android:layout_width="match_parent"
+                    android:layout_height="16dp"
+                    android:layout_above="@+id/scroller"
+                    android:background="@android:color/black"
+                    android:layout_marginBottom="4dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="start"
+                            android:textAlignment="viewStart"
+                            android:textSize="12dp"
+                            android:layout_centerVertical="true"
+                            android:layout_marginStart="4dp"
+                            android:layout_marginLeft="4dp"
+                            android:text="Image background (Scroll horizontally to view more color presets)"
+                            android:textColor="@android:color/white"
+
+                            />
+
+                </RelativeLayout>
+                <HorizontalScrollView
+                    android:id="@+id/scroller"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentBottom="true"
+                    android:layout_marginBottom="3dp">
 
 
-            tools:srcCompat="@tools:sample/avatars[14]" />
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal">
+
+                                <RelativeLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
+
+                                        <ImageView
+                                            android:id="@+id/tile1_preview"
+                                            android:layout_width="100dp"
+                                            android:layout_height="100dp"
+                                            android:layout_weight="1"
+                                            android:onClick="bottomBarClicked"
+                                            app:srcCompat="@drawable/tileicon_nopreview"
+                                            tools:srcCompat="@drawable/tileicon_nopreview" />
+
+                                        <TextView
+                                            android:id="@+id/tile1_text"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_below="@id/tile1_preview"
+                                            android:layout_centerInParent="true"
+                                            android:text="Blurred image"
+                                            android:textColor="#FFFFFF" />
 
 
+                                </RelativeLayout>
+
+                                <Space
+                                    android:layout_width="6dp"
+                                    android:layout_height="10dp" />
+
+                                <RelativeLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
+
+                                        <ImageView
+                                            android:id="@+id/tileCustomColorPick_preview"
+                                            android:layout_width="100dp"
+                                            android:layout_height="100dp"
+                                            android:layout_weight="1"
+                                            android:onClick="bottomBarClicked"
+                                            app:srcCompat="@drawable/tileicon_customcolor"
+                                            tools:srcCompat="@drawable/tileicon_customcolor" />
+
+
+                                        <TextView
+                                            android:id="@+id/tileCustomColorPick_text"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_below="@id/tileCustomColorPick_preview"
+                                            android:layout_centerInParent="true"
+                                            android:text="Custom Color"
+                                            android:textColor="#FFFFFF" />
+
+                                </RelativeLayout>
+
+                                <Space
+                                    android:layout_width="6dp"
+                                    android:layout_height="10dp" />
+
+                                <RelativeLayout
+
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
+
+                                        <View
+                                            android:id="@+id/tile2_preview"
+                                            android:layout_width="100dp"
+                                            android:layout_height="100dp"
+                                            android:background="#FFFFFF"
+
+                                            android:onClick="bottomBarClicked" />
+
+
+                                        <TextView
+                                            android:id="@+id/tile2_text"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_below="@id/tile2_preview"
+                                            android:layout_centerInParent="true"
+                                            android:text="White"
+                                            android:textColor="#FFFFFF" />
+
+                                </RelativeLayout>
+
+
+
+                                <RelativeLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
+
+                                        <View
+                                            android:id="@+id/tile3_preview"
+                                            android:layout_width="100dp"
+                                            android:layout_height="100dp"
+                                            android:background="#808080"
+                                            android:onClick="bottomBarClicked" />
+
+
+                                        <TextView
+                                            android:id="@+id/tile3_text"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_below="@id/tile3_preview"
+                                            android:layout_centerInParent="true"
+                                            android:text="Gray"
+                                            android:textColor="#FFFFFF" />
+
+                                </RelativeLayout>
+
+
+
+                                <RelativeLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
+
+
+                                        <View
+                                            android:id="@+id/tile21_preview"
+                                            android:layout_width="100dp"
+                                            android:layout_height="100dp"
+                                            android:background="#455A64"
+                                            android:onClick="bottomBarClicked" />
+
+                                        <TextView
+                                            android:id="@+id/tile21_text"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_below="@id/tile21_preview"
+                                            android:layout_centerInParent="true"
+                                            android:text="Blue Grey"
+                                            android:textColor="#FFFFFF" />
+
+
+
+                                </RelativeLayout>
+
+                                <RelativeLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
+
+                                        <View
+                                            android:id="@+id/tile4_preview"
+                                            android:layout_width="100dp"
+                                            android:layout_height="100dp"
+                                            android:background="#000000"
+                                            android:onClick="bottomBarClicked" />
+
+
+                                        <TextView
+                                            android:id="@+id/tile4_text"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_below="@id/tile4_preview"
+                                            android:layout_centerInParent="true"
+                                            android:text="Black"
+                                            android:textColor="#FFFFFF" />
+
+                                </RelativeLayout>
+
+
+
+                                <RelativeLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
+
+                                        <View
+                                            android:id="@+id/tile9_preview"
+                                            android:layout_width="100dp"
+                                            android:layout_height="100dp"
+                                            android:background="#FF2A2A"
+                                            android:onClick="bottomBarClicked" />
+
+
+                                        <TextView
+                                            android:id="@+id/tile9_text"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_below="@id/tile9_preview"
+                                            android:layout_centerInParent="true"
+                                            android:text="Red"
+                                            android:textColor="#FFFFFF" />
+
+                                </RelativeLayout>
+
+
+
+                                <RelativeLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
+
+                                        <View
+                                            android:id="@+id/tile20_preview"
+                                            android:layout_width="100dp"
+                                            android:layout_height="100dp"
+                                            android:background="#D32F2F"
+                                            android:onClick="bottomBarClicked" />
+
+
+                                        <TextView
+                                            android:id="@+id/tile20_text"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_below="@id/tile20_preview"
+                                            android:layout_centerInParent="true"
+                                            android:text="Red 700"
+                                            android:textColor="#FFFFFF" />
+
+                                </RelativeLayout>
+
+
+
+                                <RelativeLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
+
+                                        <View
+                                            android:id="@+id/tile12_preview"
+                                            android:layout_width="100dp"
+                                            android:layout_height="100dp"
+                                            android:background="#631f3a"
+                                            android:onClick="bottomBarClicked" />
+
+
+                                        <TextView
+                                            android:id="@+id/tile12_text"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_below="@id/tile12_preview"
+                                            android:layout_centerInParent="true"
+                                            android:text="Dark Velvet"
+                                            android:textColor="#FFFFFF" />
+
+                                </RelativeLayout>
+
+
+
+                                <RelativeLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
+
+                                        <View
+                                            android:id="@+id/tile13_preview"
+                                            android:layout_width="100dp"
+                                            android:layout_height="100dp"
+                                            android:background="#A35061"
+                                            android:onClick="bottomBarClicked" />
+
+
+                                        <TextView
+                                            android:id="@+id/tile13_text"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_below="@id/tile13_preview"
+                                            android:layout_centerInParent="true"
+                                            android:text="Pomegranate"
+                                            android:textColor="#FFFFFF" />
+
+                                </RelativeLayout>
+
+                                <!--Copy the below part and increment tileX_preview in order to add new bottom bar tiles. When possible switch to Recycler View or create a runtime API-->
+
+                                <!--Copy start-->
+
+
+
+                                <RelativeLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
+
+                                        <View
+                                            android:id="@+id/tile23_preview"
+                                            android:layout_width="100dp"
+                                            android:layout_height="100dp"
+                                            android:background="#F4511E"
+                                            android:onClick="bottomBarClicked" />
+
+                                        <TextView
+                                            android:id="@+id/tile23_text"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_below="@id/tile23_preview"
+                                            android:layout_centerInParent="true"
+                                            android:text="Warm Orange"
+                                            android:textColor="#FFFFFF" />
+
+                                </RelativeLayout>
+
+
+
+                                <RelativeLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
+
+                                        <View
+                                            android:id="@+id/tile22_preview"
+                                            android:layout_width="100dp"
+                                            android:layout_height="100dp"
+                                            android:background="#FFB300"
+                                            android:onClick="bottomBarClicked" />
+
+
+                                        <TextView
+                                            android:id="@+id/tile22_text"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_below="@id/tile22_preview"
+                                            android:layout_centerInParent="true"
+                                            android:text="Amber"
+                                            android:textColor="#FFFFFF" />
+
+                                </RelativeLayout>
+
+
+
+                                <RelativeLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
+
+                                        <View
+                                            android:id="@+id/tile6_preview"
+                                            android:layout_width="100dp"
+                                            android:layout_height="100dp"
+                                            android:background="#FF8A65"
+                                            android:onClick="bottomBarClicked" />
+
+
+                                        <TextView
+                                            android:id="@+id/tile6_text"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_below="@id/tile6_preview"
+                                            android:layout_centerInParent="true"
+                                            android:text="Orange"
+                                            android:textColor="#FFFFFF" />
+
+                                </RelativeLayout>
+                                <!--Copy end.-->
+
+
+
+
+                                <RelativeLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
+
+                                        <View
+                                            android:id="@+id/tile7_preview"
+                                            android:layout_width="100dp"
+                                            android:layout_height="100dp"
+                                            android:background="#FFF176"
+                                            android:onClick="bottomBarClicked" />
+
+
+                                        <TextView
+                                            android:id="@+id/tile7_text"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_below="@id/tile7_preview"
+                                            android:layout_centerInParent="true"
+                                            android:text="Yellow"
+                                            android:textColor="#FFFFFF" />
+
+                                </RelativeLayout>
+
+
+
+
+
+                                <RelativeLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
+
+                                        <View
+                                            android:id="@+id/tile5_preview"
+                                            android:layout_width="100dp"
+                                            android:layout_height="100dp"
+                                            android:background="#D801D8"
+                                            android:onClick="bottomBarClicked" />
+
+
+                                        <TextView
+                                            android:id="@+id/tile5_text"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_below="@id/tile5_preview"
+                                            android:layout_centerInParent="true"
+                                            android:text="Magenta"
+                                            android:textColor="#FFFFFF" />
+
+                                </RelativeLayout>
+
+
+
+                                <RelativeLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
+
+                                        <View
+                                            android:id="@+id/tile11_preview"
+                                            android:layout_width="100dp"
+                                            android:layout_height="100dp"
+                                            android:background="#B86BFF"
+                                            android:onClick="bottomBarClicked" />
+
+
+                                        <TextView
+                                            android:id="@+id/tile11_text"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_below="@id/tile11_preview"
+                                            android:layout_centerInParent="true"
+                                            android:text="Purple"
+                                            android:textColor="#FFFFFF" />
+
+                                </RelativeLayout>
+
+
+
+
+                                <RelativeLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
+
+                                        <View
+                                            android:id="@+id/tile10_preview"
+                                            android:layout_width="100dp"
+                                            android:layout_height="100dp"
+                                            android:background="#FF69B4"
+                                            android:onClick="bottomBarClicked" />
+
+
+                                        <TextView
+                                            android:id="@+id/tile10_text"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_below="@id/tile10_preview"
+                                            android:layout_centerInParent="true"
+                                            android:text="Pink"
+                                            android:textColor="#FFFFFF" />
+
+                                </RelativeLayout>
+
+
+
+                                <RelativeLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
+
+                                        <View
+                                            android:id="@+id/tile14_preview"
+                                            android:layout_width="100dp"
+                                            android:layout_height="100dp"
+                                            android:background="#FC759D"
+                                            android:onClick="bottomBarClicked" />
+
+
+                                        <TextView
+                                            android:id="@+id/tile14_text"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_below="@id/tile14_preview"
+                                            android:layout_centerInParent="true"
+                                            android:text="Strawberry Juice"
+                                            android:textColor="#FFFFFF" />
+
+                                </RelativeLayout>
+
+
+
+
+
+
+
+
+
+                                <RelativeLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
+
+                                        <View
+                                            android:id="@+id/tile15_preview"
+                                            android:layout_width="100dp"
+                                            android:layout_height="100dp"
+                                            android:background="#ffa8cb"
+                                            android:onClick="bottomBarClicked" />
+
+
+                                        <TextView
+                                            android:id="@+id/tile15_text"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_below="@id/tile15_preview"
+
+                                            android:layout_centerInParent="true"
+                                            android:text="Smoothie Pink"
+                                            android:textColor="#FFFFFF" />
+
+                                </RelativeLayout>
+
+
+
+
+
+
+                                <RelativeLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
+
+                                        <View
+                                            android:id="@+id/tile16_preview"
+                                            android:layout_width="100dp"
+                                            android:layout_height="100dp"
+                                            android:background="#019CE0"
+                                            android:onClick="bottomBarClicked" />
+
+
+                                        <TextView
+                                            android:id="@+id/tile16_text"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_below="@id/tile16_preview"
+                                            android:layout_centerInParent="true"
+                                            android:text="Blue skies"
+                                            android:textColor="#FFFFFF" />
+
+                                </RelativeLayout>
+
+
+                                <RelativeLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
+
+                                        <View
+                                            android:id="@+id/tile18_preview"
+                                            android:layout_width="100dp"
+                                            android:layout_height="100dp"
+                                            android:background="#00FFFF"
+                                            android:onClick="bottomBarClicked" />
+
+
+                                        <TextView
+                                            android:id="@+id/tile18_text"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_below="@id/tile18_preview"
+                                            android:layout_centerInParent="true"
+                                            android:text="Pure Cyan"
+                                            android:textColor="#FFFFFF" />
+
+                                </RelativeLayout>
+
+                                <RelativeLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
+
+                                        <View
+                                            android:id="@+id/tile19_preview"
+                                            android:layout_width="100dp"
+                                            android:layout_height="100dp"
+                                            android:background="#00e5be"
+                                            android:onClick="bottomBarClicked" />
+
+
+                                        <TextView
+                                            android:id="@+id/tile19_text"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_below="@id/tile19_preview"
+                                            android:layout_centerInParent="true"
+                                            android:text="Cool Cyan"
+                                            android:textColor="#FFFFFF" />
+
+                                </RelativeLayout>
+
+
+                                <RelativeLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
+
+                                        <View
+                                            android:id="@+id/tile17_preview"
+                                            android:layout_width="100dp"
+                                            android:layout_height="100dp"
+                                            android:background="#3EB489"
+                                            android:onClick="bottomBarClicked" />
+
+
+                                        <TextView
+                                            android:id="@+id/tile17_text"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_below="@id/tile17_preview"
+                                            android:layout_centerInParent="true"
+                                            android:text="Mint"
+                                            android:textColor="#FFFFFF" />
+
+                                </RelativeLayout>
+
+
+                                <RelativeLayout
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
+
+                                        <View
+                                            android:id="@+id/tile8_preview"
+                                            android:layout_width="100dp"
+                                            android:layout_height="100dp"
+                                            android:background="#4CAF50"
+                                            android:onClick="bottomBarClicked" />
+
+
+                                        <TextView
+                                            android:id="@+id/tile8_text"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_below="@id/tile8_preview"
+                                            android:layout_centerInParent="true"
+                                            android:text="Green"
+                                            android:textColor="#FFFFFF" />
+
+                                </RelativeLayout>
+
+
+
+
+                        </LinearLayout>
+
+
+
+                </HorizontalScrollView>
+
+
+
+                <ProgressBar
+                    android:id="@+id/loadingBar"
+                    style="?android:attr/progressBarStyle"
+                    android:layout_width="130dp"
+                    android:layout_height="130dp"
+
+                    android:layout_centerInParent="true"
+                    android:visibility="invisible" />
+                <TextView
+                    android:id="@+id/loadingBar_desc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Please wait..."
+                    android:gravity="center"
+                    android:layout_below="@+id/loadingBar"
+                    android:textColor="@android:color/white"
+                    android:layout_centerHorizontal="true"/>
+
+        </RelativeLayout>
 
 </RelativeLayout>
