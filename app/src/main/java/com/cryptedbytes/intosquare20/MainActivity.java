@@ -11,6 +11,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.RectF;
 import android.graphics.drawable.ColorDrawable;
 import android.media.ThumbnailUtils;
 import android.os.Bundle;
@@ -68,10 +70,38 @@ public class MainActivity extends AppCompatActivity {
         theIntrinsic.setInput(tmpIn);
         theIntrinsic.forEach(tmpOut);
         tmpOut.copyTo(outputBitmap);
-        bm.recycle();
+       // bm.recycle();
         rs.destroy();
 
         return outputBitmap;
+    }
+
+
+    static public Bitmap scaleCenterCrop(Bitmap source, int newHeight,
+                                         int newWidth) {
+        int sourceWidth = source.getWidth();
+        int sourceHeight = source.getHeight();
+
+        float xScale = (float) newWidth / sourceWidth;
+        float yScale = (float) newHeight / sourceHeight;
+        float scale = Math.max(xScale, yScale);
+
+        // Now get the size of the source bitmap when scaled
+        float scaledWidth = scale * sourceWidth;
+        float scaledHeight = scale * sourceHeight;
+
+        float left = (newWidth - scaledWidth) / 2;
+        float top = (newHeight - scaledHeight) / 2;
+
+        RectF targetRect = new RectF(left, top, left + scaledWidth, top
+                + scaledHeight);//from ww w  .j a va 2s. co m
+
+        Bitmap dest = Bitmap.createBitmap(newWidth, newHeight,
+                source.getConfig());
+        Canvas canvas = new Canvas(dest);
+        canvas.drawBitmap(source, null, targetRect, null);
+
+        return dest;
     }
 
     @Override
@@ -93,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @SuppressWarnings("IntegerDivisionInFloatingPointContext")
-    private Bitmap squareify(Bitmap bmp, boolean isThumbnail, @Nullable ImageView thumbnailImageView) {
+    private Bitmap squareify(Bitmap bmp, boolean isThumbnail, @Nullable ImageView thumbnailImageView, boolean blurredBackground) {
 
         int width = bmp.getWidth();
         int height = bmp.getHeight();
@@ -117,7 +147,26 @@ public class MainActivity extends AppCompatActivity {
 
         Canvas canvas = new Canvas(canvasBmp);
        // canvas.drawColor(Color.DKGRAY);
-        canvas.drawColor(selectedColor);
+
+        /*
+        Paint strokePaint = new Paint();
+        strokePaint.setStyle(Paint.Style.STROKE);
+        strokePaint.setColor(Color.YELLOW);
+        strokePaint.setStrokeWidth(25);
+        */
+
+
+        if(blurredBackground){
+
+           // canvas.drawBitmap(Bitmap.createScaledBitmap(BlurImage(bmp, getApplicationContext(), 25), newWidth, newHeight, false), 0, 0, null);
+            canvas.drawBitmap(BlurImage(scaleCenterCrop(bmp, newWidth, newHeight), getApplicationContext(), 25), 0, 0, null);
+          //  canvas.drawRect((newWidth - width) / 2, (newHeight - height) / 2, width, height - 200, strokePaint);
+        }
+        else {
+            canvas.drawColor(selectedColor);
+
+        }
+
        // Toast.makeText(this, "color read: " + selectedColor, Toast.LENGTH_SHORT).show();
         canvas.drawBitmap(bmp, (newWidth - width) / 2, (newHeight - height) / 2, null);
         bmp.recycle();
@@ -160,7 +209,7 @@ public class MainActivity extends AppCompatActivity {
                 if (resultCode == RESULT_OK) {
 
 
-
+/*
                     BitmapFactory.Options options = new BitmapFactory.Options();
                     options.inPreferredConfig = Bitmap.Config.ARGB_8888;
                     pickedBmp = null;
@@ -173,28 +222,28 @@ public class MainActivity extends AppCompatActivity {
                     }
                     ImageView previewView = findViewById(R.id.imageView);
 
+*/
 
 
-//
-//                    BitmapFactory.Options options = new BitmapFactory.Options();
-//                    options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-//                    Bitmap bitmap = null;
-//                    try {
-//                        bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(data.getData()));
-//
-//                        saveBitmapToFile(bitmap);
-//                    } catch (FileNotFoundException e) {
-//                        e.printStackTrace();
-//                    }
-//                    ImageView previewView = findViewById(R.id.imageView);
-//
+                    BitmapFactory.Options options = new BitmapFactory.Options();
+                   options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+                   Bitmap bitmap = null;
+                    try {
+                        bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(data.getData()));
+
+                        saveBitmapToFile(bitmap);
+                    } catch (FileNotFoundException e) {
+                        e.printStackTrace();
+                    }
+                    ImageView previewView = findViewById(R.id.imageView);
+
 
 
 
 
 
                     if (bitmap != null) {
-                        previewView.setImageBitmap(squareify(readBitmapFromFile(),true,previewView));
+                        previewView.setImageBitmap(squareify(readBitmapFromFile(),true,previewView, false));
                        // previewView.setImageBitmap(squareify(bitmap, true, previewView));
                     }
                     else{
@@ -238,7 +287,9 @@ public class MainActivity extends AppCompatActivity {
             case R.id.tile1_preview:
                 Toast.makeText(this, "tile1_preview",   Toast.LENGTH_SHORT).show();
                 ImageView previewView = findViewById(R.id.imageView);
-                previewView.setImageBitmap(BlurImage(readBitmapFromFile(), this, 25));
+             //   previewView.setImageBitmap(BlurImage(readBitmapFromFile(), this, 25));
+                previewView.setImageBitmap(squareify(readBitmapFromFile(),true,previewView, true));
+
 
                 break;
             case R.id.tileCustomColorPick_preview:
@@ -250,7 +301,7 @@ public class MainActivity extends AppCompatActivity {
                 //Toast.makeText(this, "color set: " + selectedColor, Toast.LENGTH_SHORT).show();
 
                  previewView = findViewById(R.id.imageView);
-                previewView.setImageBitmap(squareify(readBitmapFromFile(),true,previewView));
+                 previewView.setImageBitmap(squareify(readBitmapFromFile(),true,previewView, false));
                 break;
         }
     }
