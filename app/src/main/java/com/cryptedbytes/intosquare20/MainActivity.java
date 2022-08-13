@@ -1,5 +1,6 @@
 package com.cryptedbytes.intosquare20;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -15,7 +16,14 @@ import android.media.ThumbnailUtils;
 import android.os.Bundle;
 import android.os.Debug;
 import android.provider.MediaStore;
+import android.renderscript.Allocation;
+import android.renderscript.Element;
+import android.renderscript.RenderScript;
+import android.renderscript.ScriptIntrinsicBlur;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -29,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final byte PICK_IMAGE = 21;
     int selectedColor = Color.DKGRAY;
+    Bitmap pickedBmp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,6 +54,43 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    public static Bitmap BlurImage(Bitmap bm, Context context, float radius) {
+        //Assuming my original Bitmap is "bm"
+        Bitmap outputBitmap = Bitmap.createBitmap(bm.getWidth(),
+                bm.getHeight(), Bitmap.Config.ARGB_8888);
+
+        RenderScript rs = RenderScript.create(context);
+        ScriptIntrinsicBlur theIntrinsic = ScriptIntrinsicBlur.create(rs,
+                Element.U8_4(rs));
+        Allocation tmpIn = Allocation.createFromBitmap(rs, bm);
+        Allocation tmpOut = Allocation.createFromBitmap(rs, outputBitmap);
+        theIntrinsic.setRadius(radius);/* www.  j  a v a2s  .  c  om*/
+        theIntrinsic.setInput(tmpIn);
+        theIntrinsic.forEach(tmpOut);
+        tmpOut.copyTo(outputBitmap);
+        bm.recycle();
+        rs.destroy();
+
+        return outputBitmap;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+
+        int id = item.getItemId();
+        if (id == R.id.menu_item_1) {
+           getImage();
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
     @SuppressWarnings("IntegerDivisionInFloatingPointContext")
     private Bitmap squareify(Bitmap bmp, boolean isThumbnail, @Nullable ImageView thumbnailImageView) {
@@ -70,7 +116,9 @@ public class MainActivity extends AppCompatActivity {
         Bitmap canvasBmp = Bitmap.createBitmap(newWidth, newHeight, Bitmap.Config.ARGB_8888);
 
         Canvas canvas = new Canvas(canvasBmp);
-        canvas.drawColor(Color.DKGRAY);
+       // canvas.drawColor(Color.DKGRAY);
+        canvas.drawColor(selectedColor);
+       // Toast.makeText(this, "color read: " + selectedColor, Toast.LENGTH_SHORT).show();
         canvas.drawBitmap(bmp, (newWidth - width) / 2, (newHeight - height) / 2, null);
         bmp.recycle();
 
@@ -83,6 +131,15 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void getImage() {
+
+        ContextWrapper cw = new ContextWrapper(getApplicationContext());
+        File directory = cw.getDir("images", Context.MODE_PRIVATE);
+
+        File path = new File(directory, "img.png");
+
+        if(path.exists()){
+            path.delete();
+        }
         Intent pickPhoto = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(pickPhoto, PICK_IMAGE);
@@ -103,20 +160,34 @@ public class MainActivity extends AppCompatActivity {
                 if (resultCode == RESULT_OK) {
 
 
-                    Log.d("onActivityResult", "intent data: " + data);
 
                     BitmapFactory.Options options = new BitmapFactory.Options();
                     options.inPreferredConfig = Bitmap.Config.ARGB_8888;
-                    Bitmap bitmap = null;
+                    pickedBmp = null;
                     try {
-                        bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(data.getData()));
+                        pickedBmp = BitmapFactory.decodeStream(getContentResolver().openInputStream(data.getData()));
 
-                        saveBitmapToFile(bitmap);
+                        saveBitmapToFile(pickedBmp);
                     } catch (FileNotFoundException e) {
                         e.printStackTrace();
                     }
                     ImageView previewView = findViewById(R.id.imageView);
 
+
+
+//
+//                    BitmapFactory.Options options = new BitmapFactory.Options();
+//                    options.inPreferredConfig = Bitmap.Config.ARGB_8888;
+//                    Bitmap bitmap = null;
+//                    try {
+//                        bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(data.getData()));
+//
+//                        saveBitmapToFile(bitmap);
+//                    } catch (FileNotFoundException e) {
+//                        e.printStackTrace();
+//                    }
+//                    ImageView previewView = findViewById(R.id.imageView);
+//
 
 
 
@@ -166,6 +237,9 @@ public class MainActivity extends AppCompatActivity {
         switch(view.getId()){
             case R.id.tile1_preview:
                 Toast.makeText(this, "tile1_preview",   Toast.LENGTH_SHORT).show();
+                ImageView previewView = findViewById(R.id.imageView);
+                previewView.setImageBitmap(BlurImage(readBitmapFromFile(), this, 25));
+
                 break;
             case R.id.tileCustomColorPick_preview:
                 Toast.makeText(this, "tileCustomColorPick_preview", Toast.LENGTH_SHORT).show();
@@ -173,7 +247,10 @@ public class MainActivity extends AppCompatActivity {
             default:
                 ColorDrawable viewColor = (ColorDrawable) findViewById(view.getId()).getBackground();
                 selectedColor = viewColor.getColor();
+                //Toast.makeText(this, "color set: " + selectedColor, Toast.LENGTH_SHORT).show();
 
+                 previewView = findViewById(R.id.imageView);
+                previewView.setImageBitmap(squareify(readBitmapFromFile(),true,previewView));
                 break;
         }
     }
@@ -181,7 +258,23 @@ public class MainActivity extends AppCompatActivity {
 
 
     public void saveBitmapToFile(Bitmap bmp){
-        new Thread(new Runnable() {
+
+        ContextWrapper cw = new ContextWrapper(getApplicationContext());
+        File directory = cw.getDir("images", Context.MODE_PRIVATE);
+
+        File path = new File(directory, "img.png");
+
+        FileOutputStream outputStream = null;
+        try {
+            outputStream = new FileOutputStream(path);
+            bmp.compress(Bitmap.CompressFormat.JPEG, 90, outputStream);
+            outputStream.close();
+        } catch (Exception e) {
+            Log.e("saveBitmapToFile err:", e.getMessage(), e);
+        }
+
+
+       /* new Thread(new Runnable() {
             @Override
             public void run() {
 
@@ -202,7 +295,7 @@ public class MainActivity extends AppCompatActivity {
 
 
             }
-        });
+        });*/
 
 
     }
