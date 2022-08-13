@@ -4,8 +4,13 @@
 
     <item
         android:id="@+id/menu_item_1"
-        android:title="New"
-        android:icon="@android:drawable/ic_input_add"
+        android:title="+ New"
+        app:showAsAction="always"
+        />
+
+    <item
+        android:id="@+id/menu_item_2"
+        android:title="SAVE"
         app:showAsAction="always"
         />
 </menu>

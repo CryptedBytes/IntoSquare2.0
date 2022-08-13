@@ -3,6 +3,7 @@ package com.cryptedbytes.intosquare20;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.palette.graphics.Palette;
 
 import android.content.Context;
 import android.content.ContextWrapper;
@@ -123,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @SuppressWarnings("IntegerDivisionInFloatingPointContext")
-    private Bitmap squareify(Bitmap bmp, boolean isThumbnail, @Nullable ImageView thumbnailImageView, boolean blurredBackground) {
+    private Bitmap squareify(Bitmap bmp,Bitmap.Config colorDepth, boolean isThumbnail, @Nullable Float thumbnailQualityFactor, @Nullable ImageView thumbnailImageView, boolean blurredBackground, @Nullable Float blurQualityFactor) {
 
         int width = bmp.getWidth();
         int height = bmp.getHeight();
@@ -158,8 +159,10 @@ public class MainActivity extends AppCompatActivity {
 
         if(blurredBackground){
 
+            if(blurQualityFactor == null) blurQualityFactor = 0.5f;
+
            // canvas.drawBitmap(Bitmap.createScaledBitmap(BlurImage(bmp, getApplicationContext(), 25), newWidth, newHeight, false), 0, 0, null);
-            canvas.drawBitmap(BlurImage(scaleCenterCrop(bmp, newWidth, newHeight), getApplicationContext(), 25), 0, 0, null);
+            canvas.drawBitmap(BlurImage(scaleCenterCrop(Bitmap.createScaledBitmap(bmp,( int) (newWidth * blurQualityFactor),(int) (newHeight * blurQualityFactor), false), newWidth, newHeight), getApplicationContext(), 25), 0, 0, null);
           //  canvas.drawRect((newWidth - width) / 2, (newHeight - height) / 2, width, height - 200, strokePaint);
         }
         else {
@@ -172,15 +175,17 @@ public class MainActivity extends AppCompatActivity {
         bmp.recycle();
 
         if(isThumbnail){
-            canvasBmp = ThumbnailUtils.extractThumbnail(canvasBmp, thumbnailImageView.getWidth() / 2, thumbnailImageView.getWidth() / 2);
+            if(thumbnailQualityFactor == null) thumbnailQualityFactor = 0.5f;
+
+
+            canvasBmp = ThumbnailUtils.extractThumbnail(canvasBmp, (int)(thumbnailImageView.getWidth() * thumbnailQualityFactor), (int)(thumbnailImageView.getWidth() * thumbnailQualityFactor));
             Log.d("squareify", "thumbnail size: w: "+ thumbnailImageView.getWidth() + " h: " + thumbnailImageView.getHeight());
         }
         return canvasBmp;
     }
 
 
-    private void getImage() {
-
+    private void invaliateImage(){
         ContextWrapper cw = new ContextWrapper(getApplicationContext());
         File directory = cw.getDir("images", Context.MODE_PRIVATE);
 
@@ -189,6 +194,11 @@ public class MainActivity extends AppCompatActivity {
         if(path.exists()){
             path.delete();
         }
+
+        ImageView imageView = findViewById(R.id.imageView);
+        imageView.setImageBitmap(null);
+    }
+    private void getImage() {
         Intent pickPhoto = new Intent(Intent.ACTION_PICK,
                 android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(pickPhoto, PICK_IMAGE);
@@ -199,6 +209,11 @@ public class MainActivity extends AppCompatActivity {
         */
     }
 
+
+    private void createBottomBarPreview(){
+        ImageView previewTile = findViewById(R.id.tile1_preview);
+        previewTile.setImageBitmap(squareify(readBitmapFromFile(), Bitmap.Config.RGB_565 ,true, 0.38f , previewTile,true, 0.0085f));
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
@@ -224,6 +239,7 @@ public class MainActivity extends AppCompatActivity {
 
 */
 
+                    invaliateImage();
 
                     BitmapFactory.Options options = new BitmapFactory.Options();
                    options.inPreferredConfig = Bitmap.Config.ARGB_8888;
@@ -239,16 +255,30 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+                    try{
+                        Palette palette = Palette.from(bitmap).generate();
+                        selectedColor = palette.getDominantColor(Color.DKGRAY);
+                        View intelligentColorTile = findViewById(R.id.tileIntelligent_preview);
+                        intelligentColorTile.setBackgroundColor(selectedColor);
+
+                    }
+                    catch(Exception e){
+                        e.printStackTrace();
+                        selectedColor = Color.DKGRAY;
+                    }
 
 
 
                     if (bitmap != null) {
-                        previewView.setImageBitmap(squareify(readBitmapFromFile(),true,previewView, false));
+                        previewView.setImageBitmap(squareify(readBitmapFromFile(), Bitmap.Config.ARGB_8888,true,null ,previewView, false,null));
                        // previewView.setImageBitmap(squareify(bitmap, true, previewView));
                     }
                     else{
                         throw new NullPointerException("bitmap is null");
                     }
+
+
+                    createBottomBarPreview();
 
 
 
@@ -288,7 +318,7 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, "tile1_preview",   Toast.LENGTH_SHORT).show();
                 ImageView previewView = findViewById(R.id.imageView);
              //   previewView.setImageBitmap(BlurImage(readBitmapFromFile(), this, 25));
-                previewView.setImageBitmap(squareify(readBitmapFromFile(),true,previewView, true));
+                previewView.setImageBitmap(squareify(readBitmapFromFile(), Bitmap.Config.ARGB_8888,true,null,previewView, true,null));
 
 
                 break;
@@ -301,7 +331,7 @@ public class MainActivity extends AppCompatActivity {
                 //Toast.makeText(this, "color set: " + selectedColor, Toast.LENGTH_SHORT).show();
 
                  previewView = findViewById(R.id.imageView);
-                 previewView.setImageBitmap(squareify(readBitmapFromFile(),true,previewView, false));
+                 previewView.setImageBitmap(squareify(readBitmapFromFile(), Bitmap.Config.ARGB_8888,true,null, previewView, false,null));
                 break;
         }
     }

@@ -103,14 +103,14 @@
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
-                            android:gravity="start"
-                            android:textAlignment="viewStart"
-                            android:textSize="12dp"
                             android:layout_centerVertical="true"
                             android:layout_marginStart="4dp"
                             android:layout_marginLeft="4dp"
+                            android:gravity="start"
                             android:text="Image background (Scroll horizontally to view more color presets)"
+                            android:textAlignment="viewStart"
                             android:textColor="@android:color/white"
+                            android:textSize="12dp"
 
                             />
 
@@ -158,6 +158,7 @@
                                     android:layout_height="10dp" />
 
                                 <RelativeLayout
+                                    android:visibility="gone"
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content">
 
@@ -185,6 +186,33 @@
                                 <Space
                                     android:layout_width="6dp"
                                     android:layout_height="10dp" />
+
+
+                                <RelativeLayout
+
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content">
+
+                                        <View
+                                            android:id="@+id/tileIntelligent_preview"
+                                            android:layout_width="100dp"
+                                            android:layout_height="100dp"
+                                            android:background="#F44336"
+
+                                            android:onClick="bottomBarClicked" />
+
+
+                                        <TextView
+                                            android:id="@+id/tileIntelligent_text"
+                                            android:layout_width="wrap_content"
+                                            android:layout_height="wrap_content"
+                                            android:layout_below="@id/tileIntelligent_preview"
+                                            android:layout_centerInParent="true"
+                                            android:text="Match ✨"
+                                            android:textColor="#FFFFFF" />
+
+                                </RelativeLayout>
+
 
                                 <RelativeLayout
 
